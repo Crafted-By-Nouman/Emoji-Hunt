@@ -1,0 +1,10 @@
+@import "../../main/root.css";
+
+.container {
+  text-align: center;
+}
+
+.result {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
