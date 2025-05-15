@@ -704,6 +704,7 @@ button:hover,
 
   .emoji {
     font-size: 2rem;
+    padding: 0.3rem;
   }
 
   .game-info {
@@ -734,6 +735,7 @@ button:hover,
 
   .emoji {
     font-size: 1.8rem;
+    padding: 0.2rem;
   }
 
   #emoji-box {
