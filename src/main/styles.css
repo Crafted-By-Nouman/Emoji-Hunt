@@ -33,35 +33,39 @@ body {
   font-family: var(--font-family);
   background: linear-gradient(135deg, #f9f6d2, #ffe299);
   color: var(--text-color);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow-x: hidden;
   position: relative;
   animation: bgAnimation 15s ease infinite alternate;
-  padding: 4%;
+  padding: 2%;
 }
 
 .main-wrapper {
-  width: -webkit-fill-available;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Shared Components */
 .container,
 .popup-overlay {
   text-align: center;
-  padding: 40px;
+  padding: 2rem;
   background: rgba(255, 255, 255, 0.85);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   animation: fadeIn 1.5s ease;
   position: relative;
+  width: 100%;
+  max-width: 95%;
+  margin: 0 auto;
 }
 
 .container.result {
   max-width: 600px;
-  margin: 0 auto;
 }
 
 .popup-overlay {
@@ -76,25 +80,29 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   color: var(--text-color);
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .high-score,
 .user-info {
-  padding: 10px 20px;
+  padding: 0.75rem 1.5rem;
   background-color: #ffecb3;
   border-radius: 25px;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
+  font-size: 0.9rem;
 }
 
 .high-score:hover,
@@ -110,24 +118,25 @@ h2 {
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 25px;
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  margin-bottom: 1.5rem;
   animation: bounceIn 1s ease;
 }
 
 button,
 .action-btn {
-  padding: 12px 25px;
+  padding: 0.75rem 1.5rem;
   background-color: var(--primary);
   border: none;
   border-radius: 30px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   color: #222;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-md);
   font-family: var(--font-family);
+  min-width: 120px;
 }
 
 button:hover,
@@ -185,22 +194,23 @@ button:hover,
 /* Popup Styles */
 .popup-modal {
   position: relative;
-  width: 90%;
+  width: 100%;
   max-width: 400px;
   background: linear-gradient(145deg, var(--card-bg), #f9f9f9);
-  padding: 40px 20px 30px;
+  padding: 2.5rem 1.5rem 2rem;
   animation: slideIn 0.5s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  border-radius: var(--border-radius-lg);
 }
 
 .popup-modal input,
 .popup-modal select {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: var(--border-radius-sm);
@@ -216,8 +226,10 @@ button:hover,
 }
 
 .popup-modal button {
-  margin-top: 10px;
-  padding: 10px 20px;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  max-width: 200px;
 }
 
 .popup-modal button:hover {
@@ -226,9 +238,9 @@ button:hover,
 
 .close-btn {
   position: absolute;
-  top: 12px;
-  right: 18px;
-  font-size: 24px;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #555;
   cursor: pointer;
@@ -255,9 +267,10 @@ button:hover,
   background-color: var(--card-bg);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
-  width: 95%;
-  padding: 2rem;
-  margin: 2rem auto;
+  width: 100%;
+  max-width: 800px;
+  padding: 1.5rem;
+  margin: 1rem auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -269,18 +282,18 @@ button:hover,
 .game-header {
   width: 100%;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   position: relative;
 }
 
 .game-header h2 {
-  font-size: 1.8rem;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .target-emoji {
-  font-size: 2.2rem;
+  font-size: clamp(2rem, 6vw, 2.5rem);
   display: inline-block;
   animation: bounce 2s infinite;
 }
@@ -292,17 +305,17 @@ button:hover,
   align-items: center;
   width: 100%;
   background: rgba(255, 255, 255, 0.8);
-  padding: 0.8rem 1.2rem;
+  padding: 0.75rem 1rem;
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 0.75rem;
 }
 
 .level-info,
 .score-info {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-light);
   display: flex;
@@ -314,21 +327,21 @@ button:hover,
 .score-info span {
   color: var(--text-color);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .pause-btn,
 .hint-btn {
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 0.9rem;
   border: none;
   border-radius: var(--border-radius-sm);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   transition: var(--transition);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .pause-btn:hover,
@@ -364,11 +377,11 @@ button:hover,
 
 #crosses {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 #crosses .cross {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   opacity: 0.3;
   transition: var(--transition);
 }
@@ -388,13 +401,17 @@ button:hover,
   box-shadow: var(--shadow-sm);
   padding: 1rem;
   transition: all 0.3s ease;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
 }
 
 .emoji {
-  font-size: clamp(1.2rem, 4vw, 2.5rem);
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  padding: 0.4rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   background-color: rgba(240, 240, 240, 0.8);
   cursor: pointer;
   user-select: none;
@@ -434,16 +451,16 @@ button:hover,
 }
 
 #timer-container #timer-bar {
-  height: 10px;
+  height: 8px;
   width: 100%;
   background-color: var(--primary);
-  border-radius: 5px;
+  border-radius: 4px;
   margin-bottom: 0.5rem;
   transition: width 0.1s linear;
 }
 
 #timer-container #timer {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-light);
   display: flex;
@@ -463,13 +480,14 @@ button:hover,
 #feedback {
   width: 100%;
   text-align: center;
-  padding: 0.8rem;
+  padding: 0.75rem;
   border-radius: var(--border-radius-sm);
   margin: 0.5rem 0;
   font-weight: 600;
   opacity: 0;
   transform: translateY(10px);
   transition: var(--transition);
+  font-size: 0.9rem;
 }
 
 #feedback.success {
@@ -489,9 +507,9 @@ button:hover,
 #hint-display {
   width: 100%;
   text-align: center;
-  padding: 0.8rem;
+  padding: 0.75rem;
   margin-top: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--secondary);
   font-weight: 500;
   background: rgba(108, 92, 231, 0.1);
@@ -505,16 +523,16 @@ button:hover,
 
 .result-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 1.5rem;
 }
 
 .result-header .result-title {
-  font-size: 2.2rem;
-  margin-bottom: 10px;
+  font-size: clamp(1.8rem, 5vw, 2.2rem);
+  margin-bottom: 0.75rem;
 }
 
 .result-header .result-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-light);
   font-weight: normal;
   margin-top: 0;
@@ -522,11 +540,11 @@ button:hover,
 
 .score-display {
   text-align: center;
-  margin: 25px 0;
+  margin: 1.5rem 0;
 }
 
 .score-display .score-value {
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
   font-weight: bold;
 }
 
@@ -539,14 +557,16 @@ button:hover,
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .stats-container .stat-item {
-  margin: 10px;
-  padding: 15px 20px;
+  margin: 0.5rem;
+  padding: 1rem;
   background: var(--background);
   border-radius: var(--border-radius-md);
-  min-width: 120px;
+  min-width: 100px;
+  flex: 1;
   text-align: center;
   box-shadow: var(--shadow-sm);
 }
@@ -558,22 +578,29 @@ button:hover,
 
 .stats-container .stat-item .stat-label {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-light);
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
 }
 
 .stats-container .stat-item .stat-value {
   display: block;
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
   font-weight: bold;
 }
 
 .buttons-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 30px;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.buttons-container button {
+  flex: 1;
+  min-width: 140px;
+  max-width: 200px;
 }
 
 .buttons-container .restart-btn {
@@ -687,70 +714,72 @@ button:hover,
   }
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  #game-page {
-    padding: 1.5rem;
-    width: 98%;
+/* Extreme Small Devices (e.g., phones in portrait) */
+@media (max-width: 400px) {
+  body {
+    padding: 1%;
   }
 
-  .game-header h2 {
-    font-size: 1.5rem;
+  .container,
+  .popup-overlay {
+    padding: 1.5rem 1rem;
   }
 
-  .target-emoji {
-    font-size: 2rem;
-  }
-
-  .emoji {
-    font-size: 2rem;
-    padding: 0.3rem;
-  }
-
-  .game-info {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-  }
-
-  #emoji-box {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.8rem;
-    padding: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  #game-page {
-    padding: 1rem;
-  }
-
-  .game-header h2 {
-    font-size: 1.3rem;
-  }
-
-  .target-emoji {
-    font-size: 1.8rem;
-  }
-
-  .emoji {
-    font-size: 1.8rem;
-    padding: 0.2rem;
-  }
-
-  #emoji-box {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
-  }
-
-  .pause-btn,
-  .hint-btn {
-    padding: 0.5rem 0.8rem;
+  .high-score,
+  .user-info {
+    padding: 0.5rem 1rem;
     font-size: 0.8rem;
   }
 
-  .level-info,
-  .score-info {
+  button,
+  .action-btn {
+    padding: 0.6rem 1rem;
     font-size: 0.9rem;
+    min-width: 100px;
+  }
+
+  #emoji-box {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .emoji {
+    font-size: 1.8rem;
+  }
+
+  .stats-container .stat-item {
+    min-width: 80px;
+    padding: 0.75rem;
+  }
+}
+
+/* Tall Mobile Devices (e.g., some phones in landscape) */
+@media (max-height: 500px) and (orientation: landscape) {
+  body {
+    padding: 1%;
+  }
+
+  #game-page {
+    padding: 1rem;
+    max-width: 95%;
+  }
+
+  .game-header h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .game-info {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  #emoji-box {
+    padding: 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .emoji {
+    font-size: 1.5rem;
   }
 }
