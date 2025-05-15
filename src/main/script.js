@@ -1,5 +1,6 @@
 import { Game, setupGameLogic } from "../pages/game/game.js";
 import { Home } from "../pages/home/home.js";
+import { Result } from "../pages/result/result.js";
 
 function initGame() {
   const body = document.body;
@@ -13,39 +14,86 @@ function initGame() {
   const startButton = homePage.querySelector("#startBtn");
   startButton.addEventListener("click", () => {
     main.classList.add("loading");
-
     main.innerHTML = "";
 
     const gameElement = Game();
     main.appendChild(gameElement);
-    const gamePage = document.getElementById("game-page");
-    gamePage.style.display = "flex";
 
     const gameLogic = setupGameLogic();
 
-    document.addEventListener("gameResult", (e) => {
-      const { success, level, timeTaken, stars } = e.detail;
+    let gameEventListener;
+    document.addEventListener(
+      "gameEvent",
+      (gameEventListener = (e) => {
+        const { type, level, score, difficulty } = e.detail;
 
-      if (success) {
-        alert(
-          `Level ${level} completed in ${timeTaken} seconds! You earned ${stars} star${
-            stars > 1 ? "s" : ""
-          }!`
-        );
+        switch (type) {
+          case "levelComplete":
+            // Handle level completion if needed
+            break;
 
-        setTimeout(() => {
-          gameLogic.startGame();
-        }, 1500);
-      } else {
-        const playAgain = confirm(
-          `Game Over! You reached level ${level}. Play again?`
-        );
-        if (playAgain) {
-          gameLogic.resetGame();
-          gameLogic.startGame();
+          case "gameComplete":
+            const playAgain = confirm(
+              `Congratulations! You completed all ${level} levels with a score of ${score} on ${difficulty} difficulty. Play again?`
+            );
+            document.removeEventListener("gameEvent", gameEventListener);
+            if (playAgain) {
+              gameLogic.resetGame();
+              gameLogic.startGame();
+            } else {
+              main.innerHTML = "";
+              const home = Home();
+              main.appendChild(home);
+              const startBtn = home.querySelector("#startBtn");
+              if (startBtn) {
+                startBtn.addEventListener("click", () => {
+                  main.innerHTML = "";
+                  const gameElement = Game();
+                  main.appendChild(gameElement);
+                  const newLogic = setupGameLogic();
+                  newLogic.startGame();
+                });
+              }
+            }
+            break;
+
+          case "gameOver":
+            document.removeEventListener("gameEvent", gameEventListener);
+            main.innerHTML = "";
+            main.appendChild(
+              Result(
+                score,
+                level,
+                () => {
+                  main.innerHTML = "";
+                  const home = Home();
+                  main.appendChild(home);
+                  const startBtn = home.querySelector("#startBtn");
+                  if (startBtn) {
+                    startBtn.addEventListener("click", () => {
+                      main.innerHTML = "";
+                      const gameElement = Game();
+                      main.appendChild(gameElement);
+                      const newLogic = setupGameLogic();
+                      newLogic.resetGame();
+                      newLogic.startGame();
+                    });
+                  }
+                },
+                () => {
+                  main.innerHTML = "";
+                  const gameElement = Game();
+                  main.appendChild(gameElement);
+                  const newLogic = setupGameLogic();
+                  newLogic.resetGame();
+                  newLogic.startGame();
+                }
+              )
+            );
+            break;
         }
-      }
-    });
+      })
+    );
 
     setTimeout(() => {
       main.classList.remove("loading");

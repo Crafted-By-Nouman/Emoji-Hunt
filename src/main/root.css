@@ -37,6 +37,7 @@ body {
   overflow-x: hidden;
   position: relative;
   animation: bgAnimation 15s ease infinite alternate;
+  padding: 4%;
 }
 
 @keyframes bgAnimation {
@@ -49,4 +50,8 @@ body {
   100% {
     background-position: 0% 50%;
   }
+}
+
+.main-wrapper {
+  width: -webkit-fill-available;
 }
