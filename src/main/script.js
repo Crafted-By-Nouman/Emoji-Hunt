@@ -6,6 +6,7 @@ function initGame() {
   const body = document.body;
   const main = document.createElement("div");
   main.classList.add("main-wrapper");
+  main.id = "main";
   body.appendChild(main);
 
   const homePage = Home();

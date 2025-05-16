@@ -1,5 +1,6 @@
 // Import emoji data from external file
 import { emojis } from "../../data/emojies.js";
+import { Home } from "../home/home.js";
 
 // Game page component - creates the HTML structure for the game
 export function Game() {
@@ -83,6 +84,8 @@ export function setupGameLogic() {
   const homeBtn = document.getElementById("home-btn");
   const exitBtn = document.getElementById("exit-btn");
   const closeBtn = pauseModal ? pauseModal.querySelector(".close-btn") : null;
+  const main = document.getElementById("main");
+  const home = Home();
 
   // Get all the sound effects
   const correctSound = document.getElementById("correct-sound");
@@ -231,7 +234,7 @@ export function setupGameLogic() {
   function startTimer() {
     stopTimer(); // Clear any existing timer
     startTime = Date.now();
-    timer = setInterval(updateTimer, 0);
+    timer = setInterval(updateTimer, 100);
   }
 
   // Update the timer display every 100ms
@@ -328,7 +331,7 @@ export function setupGameLogic() {
       emojiElement.style.transform = "scale(1.2)";
       setTimeout(() => {
         emojiElement.style.transform = "scale(1)";
-      }, 0);
+      }, 200);
 
       // Calculate score
       const timeLeft = getTimeLimit() - (Date.now() - startTime) / 1000;
@@ -357,7 +360,7 @@ export function setupGameLogic() {
         } else {
           handleGameComplete();
         }
-      }, 0);
+      }, 1000);
     } else {
       // Wrong answer
       playSound(wrongSound);
@@ -370,7 +373,7 @@ export function setupGameLogic() {
       setTimeout(() => {
         emojiElement.style.transform = "scale(1)";
         emojiElement.classList.remove("wrong");
-      }, 0);
+      }, 200);
 
       // Update the X marks for wrong attempts
       const cross = document.getElementById(`cross${wrongAttempts}`);
@@ -379,7 +382,7 @@ export function setupGameLogic() {
         cross.style.transform = "scale(1.3)";
         setTimeout(() => {
           cross.style.transform = "scale(1)";
-        }, 0);
+        }, 200);
       }
 
       // Penalize time for wrong answer
@@ -389,7 +392,7 @@ export function setupGameLogic() {
       if (wrongAttempts === 3) {
         gameActive = false;
         stopTimer();
-        setTimeout(() => handleGameOver(false), 0);
+        setTimeout(() => handleGameOver(false), 500);
       }
     }
   }
@@ -413,8 +416,8 @@ export function setupGameLogic() {
       if (timerElement) {
         timerElement.style.backgroundColor = "#ffeb3b";
         setTimeout(() => {
-          timerElement.style.backgroundColor = "";
-        }, 0);
+          if (timerElement) timerElement.style.backgroundColor = "";
+        }, 500);
       }
 
       // Calculate the position hint (row and column)
@@ -425,11 +428,6 @@ export function setupGameLogic() {
 
       // Show the hint
       if (hintDisplay) hintDisplay.textContent = `Row ${row}, Column ${col}`;
-      // targetElement.classList.add("hint-highlight");
-
-      // setTimeout(() => {
-      //   targetElement.classList.remove("hint-highlight");
-      // }, 2000);
 
       // Disable hint button after use
       if (hintBtn) {
@@ -454,6 +452,7 @@ export function setupGameLogic() {
   function showPauseModal() {
     if (pauseModal) {
       pauseModal.style.display = "flex";
+      document.body.style.overflow = "hidden";
     }
   }
 
@@ -461,6 +460,7 @@ export function setupGameLogic() {
   function hidePauseModal() {
     if (pauseModal) {
       pauseModal.style.display = "none";
+      document.body.style.overflow = "";
     }
   }
 
@@ -471,7 +471,7 @@ export function setupGameLogic() {
     if (isPaused) {
       // Resume game
       startTime = Date.now() - pausedTime;
-      timer = setInterval(updateTimer, 0);
+      timer = setInterval(updateTimer, 100);
       if (pauseBtn) pauseBtn.textContent = "⏸ Pause";
       if (emojiBox) emojiBox.style.opacity = "1";
       if (hintBtn) hintBtn.disabled = hintUsed;
@@ -510,7 +510,7 @@ export function setupGameLogic() {
 
     setTimeout(() => {
       startGame();
-    }, 0);
+    }, 1500);
   }
 
   // Handle game completion (when max level reached)
@@ -571,6 +571,22 @@ export function setupGameLogic() {
     }
   }
 
+  // Reset the game to initial state
+  function resetGame() {
+    level = 1;
+    score = 0;
+    wrongAttempts = 0;
+    gameActive = false;
+    comboMultiplier = 1;
+    stopTimer();
+    if (comboTimeout) clearTimeout(comboTimeout);
+    clearHint();
+    resetCrosses();
+    if (scoreValueElement) scoreValueElement.textContent = "0";
+    if (levelNumberElement) levelNumberElement.textContent = "1";
+    hidePauseModal();
+  }
+
   // Keyboard controls handler
   function keydownHandler(e) {
     if (!gameActive) return;
@@ -593,44 +609,28 @@ export function setupGameLogic() {
   if (resumeBtn) resumeBtn.addEventListener("click", togglePause);
   if (restartBtn)
     restartBtn.addEventListener("click", () => {
+      resetGame();
+      startGame();
       hidePauseModal();
-      const event = new CustomEvent("gameEvent", {
-        detail: { type: "restartGame" },
-      });
-      document.dispatchEvent(event);
+      togglePause();
     });
   if (homeBtn)
     homeBtn.addEventListener("click", () => {
       hidePauseModal();
-      const event = new CustomEvent("gameEvent", {
-        detail: { type: "goToHome" },
-      });
-      document.dispatchEvent(event);
+      main.innerHTML = "";
+      main.appendChild(home);
     });
   if (exitBtn)
     exitBtn.addEventListener("click", () => {
       hidePauseModal();
-      handleGameOver(); // Changed from exitGame to handleGameOver
+      handleGameOver();
     });
   if (closeBtn) closeBtn.addEventListener("click", togglePause);
 
   // Return functions that can be used from outside
   return {
     startGame,
-    resetGame: () => {
-      level = 1;
-      score = 0;
-      wrongAttempts = 0;
-      gameActive = false;
-      comboMultiplier = 1;
-      stopTimer();
-      if (comboTimeout) clearTimeout(comboTimeout);
-      clearHint();
-      resetCrosses();
-      if (scoreValueElement) scoreValueElement.textContent = "0";
-      if (levelNumberElement) levelNumberElement.textContent = "1";
-      hidePauseModal();
-    },
+    resetGame,
     cleanup: () => {
       stopTimer();
       if (comboTimeout) clearTimeout(comboTimeout);
@@ -642,6 +642,9 @@ export function setupGameLogic() {
       if (homeBtn) homeBtn.removeEventListener("click", () => {});
       if (exitBtn) exitBtn.removeEventListener("click", () => {});
       if (closeBtn) closeBtn.removeEventListener("click", togglePause);
+      if (pauseModal && pauseModal.parentNode) {
+        document.body.removeChild(pauseModal);
+      }
     },
   };
 }
