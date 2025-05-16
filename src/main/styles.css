@@ -395,11 +395,11 @@ button:hover,
 #emoji-box {
   display: grid;
   gap: 0.6rem;
-  width: 100%;
+  /* width: 100%; */
   background: rgba(255, 255, 255, 0.9);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
-  padding: 1rem;
+  /* padding: 1rem; */
   transition: all 0.3s ease;
   grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
 }

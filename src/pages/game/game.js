@@ -223,7 +223,7 @@ export function setupGameLogic() {
       return;
 
     const elapsedTime = (Date.now() - startTime) / 1000;
-    const remainingTime = getTimeLimit() - elapsedTime;
+    const remainingTime = getTimeLimit() - 100;
     const percentage = (remainingTime / getTimeLimit()) * 100;
 
     if (remainingTime <= 0) {
