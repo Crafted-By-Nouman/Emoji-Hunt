@@ -51,8 +51,7 @@ export function Game() {
       <h2>Game Paused</h2>
       <div class="modal-buttons">
         <button id="resume-btn" class="action-btn">▶️ Resume</button>
-        <button id="restart-btn" class="action-btn">🔄 Restart</button>
-        <button id="home-btn" class="action-btn">🏠 Home</button>
+        <button id="restart-btn" class="action-btn">🔄 Restart</button> 
         <button id="exit-btn" class="action-btn">🚪 Exit</button>
       </div>
     </div>
@@ -81,11 +80,8 @@ export function setupGameLogic() {
   const pauseModal = document.getElementById("pause-modal");
   const resumeBtn = document.getElementById("resume-btn");
   const restartBtn = document.getElementById("restart-btn");
-  const homeBtn = document.getElementById("home-btn");
   const exitBtn = document.getElementById("exit-btn");
   const closeBtn = pauseModal ? pauseModal.querySelector(".close-btn") : null;
-  const main = document.getElementById("main");
-  const home = Home();
 
   // Get all the sound effects
   const correctSound = document.getElementById("correct-sound");
@@ -614,12 +610,7 @@ export function setupGameLogic() {
       hidePauseModal();
       togglePause();
     });
-  if (homeBtn)
-    homeBtn.addEventListener("click", () => {
-      hidePauseModal();
-      main.innerHTML = "";
-      main.appendChild(home);
-    });
+
   if (exitBtn)
     exitBtn.addEventListener("click", () => {
       hidePauseModal();
@@ -639,7 +630,6 @@ export function setupGameLogic() {
       if (hintBtn) hintBtn.removeEventListener("click", showHint);
       if (resumeBtn) resumeBtn.removeEventListener("click", togglePause);
       if (restartBtn) restartBtn.removeEventListener("click", () => {});
-      if (homeBtn) homeBtn.removeEventListener("click", () => {});
       if (exitBtn) exitBtn.removeEventListener("click", () => {});
       if (closeBtn) closeBtn.removeEventListener("click", togglePause);
       if (pauseModal && pauseModal.parentNode) {
