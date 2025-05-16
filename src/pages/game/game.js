@@ -506,7 +506,7 @@ export function setupGameLogic() {
 
     setTimeout(() => {
       startGame();
-    }, 1500);
+    }, 300);
   }
 
   // Handle game completion (when max level reached)
