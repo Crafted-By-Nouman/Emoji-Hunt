@@ -13,8 +13,8 @@ export function Game() {
     <div class="game-header">
       <h2>Find The: <span id="target-emoji" class="target-emoji"></span></h2>
       <div class="game-info">
-        <button id="pauseBtn" class="pause-btn">⏸ Pause</button>
-        <button id="hintBtn" class="hint-btn">💡 Hint</button>
+        <button id="pauseBtn" class="pause-btn">⏸</button>
+        <button id="hintBtn" class="hint-btn">💡</button>
         <div class="level-info">Level: <span id="level-number">1</span></div>
         <div class="score-info">Score: <span id="score-value">0</span></div>
         <div id="crosses">
@@ -39,6 +39,25 @@ export function Game() {
     <audio id="hint-sound" src="hint.mp3" preload="auto"></audio>
   `;
 
+  // Create and add the pause modal to the body
+  const popup = document.createElement("div");
+  popup.id = "pause-modal";
+  popup.classList.add("popup-overlay");
+  popup.style.display = "none";
+  popup.innerHTML = `
+    <div class="popup-modal">
+      <span class="close-btn">&times;</span>
+      <h2>Game Paused</h2>
+      <div class="modal-buttons">
+        <button id="resume-btn" class="action-btn">▶️ Resume</button>
+        <button id="restart-btn" class="action-btn">🔄 Restart</button>
+        <button id="home-btn" class="action-btn">🏠 Home</button>
+        <button id="exit-btn" class="action-btn">🚪 Exit</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
   return container;
 }
 
@@ -58,6 +77,12 @@ export function setupGameLogic() {
   const hintDisplay = document.getElementById("hint-display");
   const pauseBtn = document.getElementById("pauseBtn");
   const hintBtn = document.getElementById("hintBtn");
+  const pauseModal = document.getElementById("pause-modal");
+  const resumeBtn = document.getElementById("resume-btn");
+  const restartBtn = document.getElementById("restart-btn");
+  const homeBtn = document.getElementById("home-btn");
+  const exitBtn = document.getElementById("exit-btn");
+  const closeBtn = pauseModal ? pauseModal.querySelector(".close-btn") : null;
 
   // Get all the sound effects
   const correctSound = document.getElementById("correct-sound");
@@ -91,7 +116,7 @@ export function setupGameLogic() {
   let level = 1; // Current level
   let score = 0; // Player's score
   let isPaused = false; // Is the game paused?
-  let wrongAttempts = 0; // How many wrong guesses
+  let wrongAttempts = 0; // How many wrong guesses (total for the game)
   let hintUsed = false; // Did the player use a hint?
   let gameActive = false; // Is the game currently running?
   let difficulty = localStorage.getItem("level") || "Medium"; // Game difficulty
@@ -100,7 +125,7 @@ export function setupGameLogic() {
   let lastCorrectTime = 0; // When the last correct answer was
 
   // Game settings - these numbers control how the game works
-  const BASE_TIME_LIMIT = { Easy: 20, Medium: 14, Hard: 8 }; // Time per level
+  const BASE_TIME_LIMIT = { Easy: 20, Medium: 15, Hard: 10 }; // Time per level
   const BASE_EMOJI_COUNT = 6; // Starting number of emojis
   const EMOJI_INCREMENT_PER_LEVEL = 2; // How many more emojis each level
   const HINT_PENALTY_SECONDS = 3; // Time lost when using hint
@@ -113,7 +138,6 @@ export function setupGameLogic() {
   // Start a new game or level
   function startGame() {
     gameActive = true;
-    resetCrosses();
     clearHint();
     startTimer();
 
@@ -181,7 +205,6 @@ export function setupGameLogic() {
     });
 
     // Reset game state for new level
-    wrongAttempts = 0;
     hintUsed = false;
     levelNumberElement.textContent = level;
     updateTimeLimit();
@@ -362,7 +385,7 @@ export function setupGameLogic() {
       // Penalize time for wrong answer
       startTime -= WRONG_ATTEMPT_PENALTY_SECONDS * 1000;
 
-      // Game over after 3 wrong attempts
+      // Game over after 3 wrong attempts (total for the game)
       if (wrongAttempts === 3) {
         gameActive = false;
         stopTimer();
@@ -402,11 +425,11 @@ export function setupGameLogic() {
 
       // Show the hint
       if (hintDisplay) hintDisplay.textContent = `Row ${row}, Column ${col}`;
-      targetElement.classList.add("hint-highlight");
+      // targetElement.classList.add("hint-highlight");
 
-      setTimeout(() => {
-        targetElement.classList.remove("hint-highlight");
-      }, 2000);
+      // setTimeout(() => {
+      //   targetElement.classList.remove("hint-highlight");
+      // }, 2000);
 
       // Disable hint button after use
       if (hintBtn) {
@@ -427,6 +450,20 @@ export function setupGameLogic() {
     }
   }
 
+  // Show pause modal
+  function showPauseModal() {
+    if (pauseModal) {
+      pauseModal.style.display = "flex";
+    }
+  }
+
+  // Hide pause modal
+  function hidePauseModal() {
+    if (pauseModal) {
+      pauseModal.style.display = "none";
+    }
+  }
+
   // Pause or resume the game
   function togglePause() {
     if (!gameActive) return;
@@ -439,6 +476,7 @@ export function setupGameLogic() {
       if (emojiBox) emojiBox.style.opacity = "1";
       if (hintBtn) hintBtn.disabled = hintUsed;
       if (gamePage) gamePage.focus();
+      hidePauseModal();
     } else {
       // Pause game
       stopTimer();
@@ -446,6 +484,7 @@ export function setupGameLogic() {
       if (pauseBtn) pauseBtn.textContent = "▶️ Resume";
       if (emojiBox) emojiBox.style.opacity = "0.5";
       if (hintBtn) hintBtn.disabled = true;
+      showPauseModal();
     }
     isPaused = !isPaused;
   }
@@ -550,6 +589,31 @@ export function setupGameLogic() {
   if (hintBtn) hintBtn.addEventListener("click", showHint);
   if (gamePage) gamePage.addEventListener("keydown", keydownHandler);
 
+  // Set up pause modal button events
+  if (resumeBtn) resumeBtn.addEventListener("click", togglePause);
+  if (restartBtn)
+    restartBtn.addEventListener("click", () => {
+      hidePauseModal();
+      const event = new CustomEvent("gameEvent", {
+        detail: { type: "restartGame" },
+      });
+      document.dispatchEvent(event);
+    });
+  if (homeBtn)
+    homeBtn.addEventListener("click", () => {
+      hidePauseModal();
+      const event = new CustomEvent("gameEvent", {
+        detail: { type: "goToHome" },
+      });
+      document.dispatchEvent(event);
+    });
+  if (exitBtn)
+    exitBtn.addEventListener("click", () => {
+      hidePauseModal();
+      handleGameOver(); // Changed from exitGame to handleGameOver
+    });
+  if (closeBtn) closeBtn.addEventListener("click", togglePause);
+
   // Return functions that can be used from outside
   return {
     startGame,
@@ -565,6 +629,7 @@ export function setupGameLogic() {
       resetCrosses();
       if (scoreValueElement) scoreValueElement.textContent = "0";
       if (levelNumberElement) levelNumberElement.textContent = "1";
+      hidePauseModal();
     },
     cleanup: () => {
       stopTimer();
@@ -572,6 +637,11 @@ export function setupGameLogic() {
       if (gamePage) gamePage.removeEventListener("keydown", keydownHandler);
       if (pauseBtn) pauseBtn.removeEventListener("click", togglePause);
       if (hintBtn) hintBtn.removeEventListener("click", showHint);
+      if (resumeBtn) resumeBtn.removeEventListener("click", togglePause);
+      if (restartBtn) restartBtn.removeEventListener("click", () => {});
+      if (homeBtn) homeBtn.removeEventListener("click", () => {});
+      if (exitBtn) exitBtn.removeEventListener("click", () => {});
+      if (closeBtn) closeBtn.removeEventListener("click", togglePause);
     },
   };
 }
