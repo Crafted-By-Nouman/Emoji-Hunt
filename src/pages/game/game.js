@@ -208,7 +208,7 @@ export function setupGameLogic() {
   function startTimer() {
     stopTimer(); // Clear any existing timer
     startTime = Date.now();
-    timer = setInterval(updateTimer, 100);
+    timer = setInterval(updateTimer, 0);
   }
 
   // Update the timer display every 100ms
@@ -305,7 +305,7 @@ export function setupGameLogic() {
       emojiElement.style.transform = "scale(1.2)";
       setTimeout(() => {
         emojiElement.style.transform = "scale(1)";
-      }, 300);
+      }, 0);
 
       // Calculate score
       const timeLeft = getTimeLimit() - (Date.now() - startTime) / 1000;
@@ -334,7 +334,7 @@ export function setupGameLogic() {
         } else {
           handleGameComplete();
         }
-      }, 1500);
+      }, 0);
     } else {
       // Wrong answer
       playSound(wrongSound);
@@ -347,7 +347,7 @@ export function setupGameLogic() {
       setTimeout(() => {
         emojiElement.style.transform = "scale(1)";
         emojiElement.classList.remove("wrong");
-      }, 300);
+      }, 0);
 
       // Update the X marks for wrong attempts
       const cross = document.getElementById(`cross${wrongAttempts}`);
@@ -356,7 +356,7 @@ export function setupGameLogic() {
         cross.style.transform = "scale(1.3)";
         setTimeout(() => {
           cross.style.transform = "scale(1)";
-        }, 200);
+        }, 0);
       }
 
       // Penalize time for wrong answer
@@ -366,7 +366,7 @@ export function setupGameLogic() {
       if (wrongAttempts === 3) {
         gameActive = false;
         stopTimer();
-        setTimeout(() => handleGameOver(false), 800);
+        setTimeout(() => handleGameOver(false), 0);
       }
     }
   }
@@ -391,7 +391,7 @@ export function setupGameLogic() {
         timerElement.style.backgroundColor = "#ffeb3b";
         setTimeout(() => {
           timerElement.style.backgroundColor = "";
-        }, 500);
+        }, 0);
       }
 
       // Calculate the position hint (row and column)
@@ -434,7 +434,7 @@ export function setupGameLogic() {
     if (isPaused) {
       // Resume game
       startTime = Date.now() - pausedTime;
-      timer = setInterval(updateTimer, 100);
+      timer = setInterval(updateTimer, 0);
       if (pauseBtn) pauseBtn.textContent = "⏸ Pause";
       if (emojiBox) emojiBox.style.opacity = "1";
       if (hintBtn) hintBtn.disabled = hintUsed;
@@ -471,7 +471,7 @@ export function setupGameLogic() {
 
     setTimeout(() => {
       startGame();
-    }, 1500);
+    }, 0);
   }
 
   // Handle game completion (when max level reached)
