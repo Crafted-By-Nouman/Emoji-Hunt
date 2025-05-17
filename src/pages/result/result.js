@@ -10,12 +10,17 @@ export const Result = (score, level, homeBtnClick, restartBtnClick) => {
   const highScore = parseInt(localStorage.getItem("highScore") || "0");
   const isNewHighScore = score > highScore;
   const getRandomQuote = (quotes) => {
+    if (!quotes || quotes.length === 0) return "";
     const index = Math.floor(Math.random() * quotes.length);
     return quotes[index];
   };
 
   if (isNewHighScore) {
-    localStorage.setItem("highScore", score);
+    try {
+      localStorage.setItem("highScore", score);
+    } catch (e) {
+      console.error("Failed to save high score:", e);
+    }
   }
 
   const result = document.createElement("div");
@@ -93,12 +98,18 @@ export const Result = (score, level, homeBtnClick, restartBtnClick) => {
   const restartBtn = document.createElement("button");
   restartBtn.textContent = "Play Again";
   restartBtn.classList.add("action-btn", "restart-btn");
-  restartBtn.addEventListener("click", restartBtnClick);
+  restartBtn.addEventListener("click", (e) => {
+    restartBtn.disabled = true;
+    restartBtnClick(e);
+  });
 
   const homeBtn = document.createElement("button");
   homeBtn.textContent = "Home";
   homeBtn.classList.add("action-btn", "home-btn");
-  homeBtn.addEventListener("click", homeBtnClick);
+  homeBtn.addEventListener("click", (e) => {
+    homeBtn.disabled = true;
+    homeBtnClick(e);
+  });
 
   buttonsContainer.appendChild(restartBtn);
   buttonsContainer.appendChild(homeBtn);

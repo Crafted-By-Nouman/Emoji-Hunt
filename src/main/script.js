@@ -9,23 +9,42 @@ function initGame() {
   main.id = "main";
   body.appendChild(main);
 
-  const homePage = Home();
-  main.appendChild(homePage);
+  let gameEventListener = null;
+  let gameLogic = null;
 
-  const startButton = homePage.querySelector("#startBtn");
-  startButton.addEventListener("click", () => {
+  function cleanupGame() {
+    if (gameEventListener) {
+      document.removeEventListener("gameEvent", gameEventListener);
+      gameEventListener = null;
+    }
+    if (gameLogic) {
+      gameLogic = null;
+    }
+  }
+
+  function initializeHome() {
+    main.innerHTML = "";
+    const homePage = Home();
+    main.appendChild(homePage);
+
+    const startButton = homePage.querySelector("#startBtn");
+    if (startButton) {
+      startButton.addEventListener("click", startGame, { once: true });
+    }
+  }
+
+  function startGame() {
+    cleanupGame();
     main.classList.add("loading");
     main.innerHTML = "";
 
-    const gameElement = Game();
-    main.appendChild(gameElement);
+    try {
+      const gameElement = Game();
+      main.appendChild(gameElement);
 
-    const gameLogic = setupGameLogic();
+      gameLogic = setupGameLogic();
 
-    let gameEventListener;
-    document.addEventListener(
-      "gameEvent",
-      (gameEventListener = (e) => {
+      gameEventListener = (e) => {
         const { type, level, score, difficulty } = e.detail;
 
         switch (type) {
@@ -34,73 +53,58 @@ function initGame() {
             break;
 
           case "gameComplete":
-            const playAgain = confirm(
-              `Congratulations! You completed all ${level} levels with a score of ${score} on ${difficulty} difficulty. Play again?`
-            );
-            document.removeEventListener("gameEvent", gameEventListener);
-            if (playAgain) {
-              gameLogic.resetGame();
-              gameLogic.startGame();
-            } else {
-              main.innerHTML = "";
-              const home = Home();
-              main.appendChild(home);
-              const startBtn = home.querySelector("#startBtn");
-              if (startBtn) {
-                startBtn.addEventListener("click", () => {
-                  main.innerHTML = "";
-                  const gameElement = Game();
-                  main.appendChild(gameElement);
-                  const newLogic = setupGameLogic();
-                  newLogic.startGame();
-                });
+            {
+              const playAgain = confirm(
+                `Congratulations! You completed all ${level} levels with a score of ${score} on ${difficulty} difficulty. Play again?`
+              );
+              cleanupGame();
+              if (playAgain) {
+                gameLogic.resetGame();
+                gameLogic.startGame();
+              } else {
+                initializeHome();
               }
             }
             break;
 
           case "gameOver":
-            document.removeEventListener("gameEvent", gameEventListener);
+            cleanupGame();
             main.innerHTML = "";
             main.appendChild(
               Result(
                 score,
                 level,
                 () => {
-                  main.innerHTML = "";
-                  const home = Home();
-                  main.appendChild(home);
-                  const startBtn = home.querySelector("#startBtn");
-                  if (startBtn) {
-                    startBtn.addEventListener("click", () => {
-                      main.innerHTML = "";
-                      const gameElement = Game();
-                      main.appendChild(gameElement);
-                      const newLogic = setupGameLogic();
-                      newLogic.resetGame();
-                      newLogic.startGame();
-                    });
-                  }
+                  initializeHome();
                 },
                 () => {
                   main.innerHTML = "";
                   const gameElement = Game();
                   main.appendChild(gameElement);
-                  const newLogic = setupGameLogic();
-                  newLogic.resetGame();
-                  newLogic.startGame();
+                  gameLogic = setupGameLogic();
+                  gameLogic.resetGame();
+                  gameLogic.startGame();
                 }
               )
             );
             break;
         }
-      })
-    );
+      };
 
-    setTimeout(() => {
+      document.addEventListener("gameEvent", gameEventListener);
+
+      setTimeout(() => {
+        main.classList.remove("loading");
+        gameLogic.startGame();
+      }, 500);
+    } catch (error) {
+      console.error("Game initialization failed:", error);
       main.classList.remove("loading");
-      gameLogic.startGame();
-    }, 500);
-  });
+      initializeHome();
+    }
+  }
+
+  initializeHome();
 }
 
 if (document.readyState === "loading") {

@@ -9,9 +9,11 @@ export const Home = () => {
   highScore.classList.add("high-score");
   const savedScore = (() => {
     try {
-      return localStorage.getItem("highScore") || 0;
+      const score = localStorage.getItem("highScore");
+      return score !== null ? score : "N/A";
     } catch (e) {
-      return 0;
+      console.error("Failed to access high score:", e);
+      return "N/A";
     }
   })();
   highScore.textContent = `🏆 HS: ${savedScore}`;
@@ -23,6 +25,7 @@ export const Home = () => {
     try {
       return localStorage.getItem("username");
     } catch (e) {
+      console.error("Failed to access username:", e);
       return null;
     }
   })();
@@ -48,22 +51,35 @@ export const Home = () => {
     try {
       return localStorage.getItem("username") && localStorage.getItem("level");
     } catch (e) {
+      console.error("Failed to check user data:", e);
       return false;
     }
   })();
 
   if (!hasUserData) {
-    showWelcomePopup();
+    setTimeout(() => {
+      if (!document.querySelector(".popup-overlay")) {
+        showWelcomePopup();
+      }
+    }, 500);
   }
 
   return home;
 };
 
 function showWelcomePopup() {
-  if (document.querySelector(".popup-overlay")) return;
+  const existingPopup = document.querySelector(".popup-overlay");
+  if (existingPopup) {
+    document.body.removeChild(existingPopup);
+  }
 
   const popup = document.createElement("div");
   popup.classList.add("popup-overlay");
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) {
+      document.body.removeChild(popup);
+    }
+  });
 
   const modal = document.createElement("div");
   modal.classList.add("popup-modal");
@@ -98,10 +114,18 @@ function showWelcomePopup() {
 }
 
 function showUserPopup() {
-  if (document.querySelector(".popup-overlay")) return;
+  const existingPopup = document.querySelector(".popup-overlay");
+  if (existingPopup) {
+    document.body.removeChild(existingPopup);
+  }
 
   const popup = document.createElement("div");
   popup.classList.add("popup-overlay");
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) {
+      document.body.removeChild(popup);
+    }
+  });
 
   const modal = document.createElement("div");
   modal.classList.add("popup-modal");
@@ -118,11 +142,12 @@ function showUserPopup() {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.placeholder = "Enter your name";
+  input.placeholder = "Enter your name (3-12 chars)";
   input.value = (() => {
     try {
       return localStorage.getItem("username") || "";
     } catch (e) {
+      console.error("Failed to access username:", e);
       return "";
     }
   })();
@@ -137,7 +162,7 @@ function showUserPopup() {
         option.selected = true;
       }
     } catch (e) {
-      // Ignore error
+      console.error("Failed to access level:", e);
     }
     select.appendChild(option);
   });
@@ -147,17 +172,21 @@ function showUserPopup() {
   saveBtn.addEventListener("click", () => {
     const name = input.value.trim();
     const level = select.value;
-    if (name) {
+    if (name && name.length >= 3 && name.length <= 12) {
       try {
         localStorage.setItem("username", name);
         localStorage.setItem("level", level);
-        document.querySelector(".user-info").textContent = `👤 ${name}`;
+        const userInfoElement = document.querySelector(".user-info");
+        if (userInfoElement) {
+          userInfoElement.textContent = `👤 ${name}`;
+        }
         document.body.removeChild(popup);
       } catch (e) {
+        console.error("Failed to save settings:", e);
         alert("Failed to save settings. Please try again.");
       }
     } else {
-      alert("Please enter a name.");
+      alert("Please enter a valid name (3-12 characters).");
     }
   });
 
