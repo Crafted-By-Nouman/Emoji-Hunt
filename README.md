@@ -34,12 +34,6 @@ Check out the game here:
 
 ---
 
-## 📸 Screenshots
-
-*(Add screenshots or GIFs of the game here to showcase it)*
-
----
-
 ## 🔧 How to Run Locally
 
 1. Clone the repo:  
